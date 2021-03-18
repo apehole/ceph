@@ -88,24 +88,31 @@ Ceph Conf: {ceph_path}
     def _get_split_args(self):
         subcommands = self.mapper.keys()
         slice_on_index = len(self.argv) + 1
+        # pruned_args实际的命令
         pruned_args = self.argv[1:]
+        # 分割出子命令
         for count, arg in enumerate(pruned_args):
             if arg in subcommands:
                 slice_on_index = count
                 break
+        # return 主命令(e.g:ceph-volume)，子命令(lvm create --data xxx) （ceph-volume lvm create --data xxx）
         return pruned_args[:slice_on_index], pruned_args[slice_on_index:]
 
     @catches()
     def main(self, argv):
         # these need to be available for the help, which gets parsed super
         # early
+        # 获取初始化的conf路径（'/etc/ceph/ceph.conf'）
         configuration.load_ceph_conf_path()
+        # /var/log/ceph
         self.load_log_path()
         self.enable_plugins()
+        # 获得主命令，子命令
         main_args, subcommand_args = self._get_split_args()
         # no flags where passed in, return the help menu instead of waiting for
         # argparse which will end up complaning that there are no args
         if len(argv) <= 1:
+            # 打印帮助信息
             print(self.help(warning=True))
             raise SystemExit(0)
         parser = argparse.ArgumentParser(
@@ -113,23 +120,28 @@ Ceph Conf: {ceph_path}
             formatter_class=argparse.RawDescriptionHelpFormatter,
             description=self.help(),
         )
+        # 用来指定cluster名字
         parser.add_argument(
             '--cluster',
             default='ceph',
             help='Cluster name (defaults to "ceph")',
         )
+        # 用来指定log等级
         parser.add_argument(
             '--log-level',
             default='debug',
             choices=['debug', 'info', 'warning', 'error', 'critical'],
             help='Change the file log level (defaults to debug)',
         )
+        # 用来指定log路径
         parser.add_argument(
             '--log-path',
             default='/var/log/ceph/',
             help='Change the log path (defaults to /var/log/ceph)',
         )
+        # 解析主命令
         args = parser.parse_args(main_args)
+        # 如果指定log path使用自定义的log path
         conf.log_path = args.log_path
         if os.path.isdir(conf.log_path):
             conf.log_path = os.path.join(args.log_path, 'ceph-volume.log')
@@ -139,8 +151,10 @@ Ceph Conf: {ceph_path}
         logger.info("Running command: ceph-volume %s %s", " ".join(main_args), " ".join(subcommand_args))
         # set all variables from args and load everything needed according to
         # them
+        # 重设cluster名称，并且可以通过设置CEPH_CONF环境变量来指定conf路径
         configuration.load_ceph_conf_path(cluster_name=args.cluster)
         try:
+            # 解析配置文件
             conf.ceph = configuration.load(conf.path)
         except exceptions.ConfigurationError as error:
             # we warn only here, because it is possible that the configuration
@@ -149,6 +163,7 @@ Ceph Conf: {ceph_path}
             logger.exception('ignoring inability to load ceph.conf')
             terminal.red(error)
         # dispatch to sub-commands
+        # 处理子命令
         terminal.dispatch(self.mapper, subcommand_args)
 
 

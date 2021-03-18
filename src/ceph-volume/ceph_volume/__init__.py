@@ -1,6 +1,7 @@
+# 初始化
 from collections import namedtuple
 
-
+# 初始化sys_info字典
 sys_info = namedtuple('sys_info', ['devices'])
 sys_info.devices = dict()
 
@@ -13,7 +14,7 @@ class UnloadedConfig(object):
     """
     def __getattr__(self, *a):
         raise RuntimeError("No valid ceph configuration file was loaded.")
-
+# 初始化conf
 conf = namedtuple('config', ['ceph', 'cluster', 'verbosity', 'path', 'log_path'])
 conf.ceph = UnloadedConfig()
 

@@ -144,6 +144,7 @@ class Prepare(object):
         If the device is not a logical volume, then retrieve the partition UUID
         by querying ``blkid``
         """
+        # 如果未指定磁盘直接返回
         if device_name is None:
             return '', '', tags
         tags['ceph.type'] = device_type
@@ -359,6 +360,7 @@ class Prepare(object):
             except ValueError:
                 block_lv = None
 
+            # 如果磁盘未进行任何分区，做data盘创建前的准备，创建lv分区
             if not block_lv:
                 block_lv = self.prepare_data_device('block', osd_fsid)
 

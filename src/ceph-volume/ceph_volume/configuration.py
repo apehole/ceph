@@ -50,12 +50,14 @@ def load(abspath=None):
     if not os.path.exists(abspath):
         raise exceptions.ConfigurationError(abspath=abspath)
 
+    # 实例化Conf
     parser = Conf()
 
     try:
         ceph_file = open(abspath)
         trimmed_conf = _TrimIndentFile(ceph_file)
         with contextlib.closing(ceph_file):
+            # 解析配置到parser
             parser.read_conf(trimmed_conf)
             conf.ceph = parser
             return parser
@@ -223,6 +225,7 @@ class Conf(conf_parentclass):
                     options[name] = '\n'.join(val)
 
     def read_conf(self, conffile):
+        # 获取python版本
         if sys_version_info.major >= 3:
             self.read_file(conffile)
         elif sys_version_info.major < 3:

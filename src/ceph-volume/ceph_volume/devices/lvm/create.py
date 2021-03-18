@@ -21,8 +21,11 @@ class Create(object):
     @decorators.needs_root
     def create(self, args):
         if not args.osd_fsid:
+            # 创建osdID
             args.osd_fsid = system.generate_uuid()
+        # 初始化Prepare对象
         prepare_step = Prepare([])
+        # 加查磁盘是否可用，秘钥等
         prepare_step.safe_prepare(args)
         osd_id = prepare_step.osd_id
         try:
@@ -72,6 +75,8 @@ class Create(object):
         args = parser.parse_args(self.argv)
         # Default to bluestore here since defaulting it in add_argument may
         # cause both to be True
+        # 默认使用bulestore
         if not args.bluestore and not args.filestore:
             args.bluestore = True
+        # 开始创建
         self.create(args)

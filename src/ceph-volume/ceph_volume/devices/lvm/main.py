@@ -39,6 +39,7 @@ class LVM(object):
         return self._help.format(sub_help=sub_help)
 
     def main(self):
+        # 再进入下一层（以create为例，将实例化create.Create对象，并调用其main属性)
         terminal.dispatch(self.mapper, self.argv)
         parser = argparse.ArgumentParser(
             prog='ceph-volume lvm',

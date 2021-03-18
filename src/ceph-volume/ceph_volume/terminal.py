@@ -189,7 +189,9 @@ def dispatch(mapper, argv=None):
     argv = argv or sys.argv
     for count, arg in enumerate(argv, 1):
         if arg in mapper.keys():
+            # 实例化
             instance = mapper.get(arg)(argv[count:])
+            # 检查是否有instance对象实例的main属性,如果存在则调用（以lvm为例指向ceph_volume.devices.LVM.main）
             if hasattr(instance, 'main'):
                 instance.main()
                 raise SystemExit(0)
