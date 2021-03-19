@@ -25,7 +25,7 @@ class Create(object):
             args.osd_fsid = system.generate_uuid()
         # 初始化Prepare对象
         prepare_step = Prepare([])
-        # 加查磁盘是否可用，秘钥等
+        # 检查磁盘是否可用，秘钥等
         prepare_step.safe_prepare(args)
         osd_id = prepare_step.osd_id
         try:

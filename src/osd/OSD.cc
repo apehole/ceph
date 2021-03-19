@@ -1928,16 +1928,16 @@ int OSD::mkfs(CephContext *cct, ObjectStore *store, uuid_d fsid, int whoami, str
 
   // if we are fed a uuid for this osd, use it.
   store->set_fsid(cct->_conf->osd_uuid);
-
+  // 以bluestore为例指向BlueStore.cc的mkfs方法
   ret = store->mkfs();
   if (ret) {
     derr << "OSD::mkfs: ObjectStore::mkfs failed with error "
          << cpp_strerror(ret) << dendl;
     goto free_store;
   }
-
+  // 设置缓存清理方式
   store->set_cache_shards(1);  // doesn't matter for mkfs!
-
+  // 挂载
   ret = store->mount();
   if (ret) {
     derr << "OSD::mkfs: couldn't mount ObjectStore: error "

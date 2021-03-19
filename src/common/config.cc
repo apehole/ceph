@@ -348,6 +348,7 @@ int md_config_t::parse_config_files(ConfigValues& values,
   }
 
   if (!conf_files_str) {
+      // 如果conf文件不存在，尝试从env中获取
     const char *c = getenv("CEPH_CONF");
     if (c) {
       conf_files_str = c;

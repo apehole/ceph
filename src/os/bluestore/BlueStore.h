@@ -3349,6 +3349,16 @@ private:
     FSCK_ObjectCtx& ctx);
 };
 
+
+
+
+
+
+
+
+
+
+
 inline ostream& operator<<(ostream& out, const BlueStore::volatile_statfs& s) {
   return out 
     << " allocated:"

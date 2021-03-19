@@ -111,10 +111,12 @@ int main(int argc, const char **argv)
 {
   vector<const char*> args;
   argv_to_vec(argc, argv, args);
+    // 判断是否为空
   if (args.empty()) {
     cerr << argv[0] << ": -h or --help for usage" << std::endl;
     exit(1);
   }
+    // 判断是否需要打印usage
   if (ceph_argparse_need_usage(args)) {
     usage();
     exit(0);
@@ -315,6 +317,7 @@ int main(int argc, const char **argv)
 
   std::string journal_path = g_conf().get_val<std::string>("osd_journal");
   uint32_t flags = g_conf().get_val<uint64_t>("osd_os_flags");
+  // 根据store_type获得一个ObjectStore实例
   ObjectStore *store = ObjectStore::create(g_ceph_context,
 					   store_type,
 					   data_path,
@@ -332,7 +335,7 @@ int main(int argc, const char **argv)
 
     EntityName ename{g_conf()->name};
     EntityAuth eauth;
-
+    // 创建osd秘钥/var/lib/ceph/osd/ceph-x/keyring
     std::string keyring_path = g_conf().get_val<std::string>("keyring");
     int ret = keyring.load(g_ceph_context, keyring_path);
     if (ret == 0 &&
